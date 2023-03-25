@@ -1,16 +1,13 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Configuration;
+using Microsoft.Data.Sqlite;
 using ConsoleTableExt;
 
 internal class DatabaseManager
 {
-    private readonly SqliteConnection _connection;
-    private SqliteCommand _command;
+    static string connectionString = ConfigurationManager.AppSettings.Get("ConnectionString");
+    private static readonly SqliteConnection _connection = new SqliteConnection(connectionString);
+    private static SqliteCommand _command = new SqliteCommand();
 
-    public DatabaseManager(string connectionString)
-    {
-        _connection = new SqliteConnection(connectionString);
-        _command = _connection.CreateCommand();
-    }
     public void CreateTable()
     {
         using (_connection)
@@ -30,7 +27,7 @@ internal class DatabaseManager
         }
     }
 
-    public void InsertSession(string duration)
+    public static void InsertSession(string duration)
     {
         DateTime date = DateTime.Now;
         string today = date.ToString("dd:MM");
@@ -38,17 +35,24 @@ internal class DatabaseManager
         {
             _connection.Open();
             var tableCmd = _connection.CreateCommand();
+            tableCmd.CommandType = System.Data.CommandType.Text;
             tableCmd.CommandText =
-                @$"INSERT INTO coding (
-                  VALUES ({today}, {duration})";  
+                $"INSERT INTO coding (date, duration) VALUES ('{today}', '{duration}')";
+
+            tableCmd.ExecuteNonQuery();
+
+            _connection.Close();
+            Console.WriteLine("Session has ended and been added succesfully!");
+            Console.WriteLine($"Your session was {duration} long\n");
         }
     }
-    public void ViewSessions()
+    public static void ViewSessions()
     {
         using (_connection)
         {
             _connection.Open();
             string viewSessions = $"SELECT * FROM coding";
+            _command = _connection.CreateCommand();
             _command.CommandText = viewSessions;
             SqliteDataReader reader = _command.ExecuteReader();
             Console.WriteLine($"{reader.GetName(0)}     {reader.GetName(1)}      {reader.GetName(2)}");
@@ -59,25 +63,35 @@ internal class DatabaseManager
             }
             _connection.Close();
         }
-        Console.WriteLine("End of table");
+        Console.WriteLine("End of table\n");
     }
-    public void DeleteSession(string Id)
+    public static void DeleteSession(string id)
     {
         using (_connection)
         {
             _connection.Open();
-            string deleteSession = $"DELETE FROM coding WHERE id={int.Parse(Id)}";
+            string deleteSession = $"DELETE FROM coding WHERE id={int.Parse(id)}";
+            _command = _connection.CreateCommand();
             _command.CommandText = deleteSession;
+
+            _command.ExecuteNonQuery();
 
             _connection.Close();
         }
+        Console.WriteLine($"Session with ID {id} has been deleted.\n");
     }
-    public void UpdateSession()
+    public static void UpdateSession(string id, string duration)
     {
         using (_connection)
         {
             _connection.Open();
-            string updateSession = $"UPDATE coding SET ";
+            string updateSession = $"UPDATE coding SET duration='{duration}' WHERE id={int.Parse(id)}";
+            _command = _connection.CreateCommand();
+            _command.CommandText = updateSession;
+
+            _command.ExecuteNonQuery();
+
+            _connection.Close();
         }
     }
 

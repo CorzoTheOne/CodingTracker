@@ -36,5 +36,17 @@ namespace CodingTracker
             }
             return input;
         }
+
+        public static bool ValidIdUpdateSession()
+        {
+            Console.WriteLine("Please input the ID of the session you wish to update:");
+            bool approvedInput = true;
+            while (approvedInput)
+            {
+                string update = Console.ReadLine();
+                
+            }
+            return true;
+        }
     }
 }

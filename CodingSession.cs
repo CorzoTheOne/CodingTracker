@@ -1,4 +1,6 @@
-﻿public static class CodingSession
+﻿using System;
+
+public static class CodingSession
 {
     public static int Id = 1;
     private static DateTime StartCodingSession()
@@ -16,8 +18,12 @@
     private static string CodingSessionDuration(DateTime start, DateTime end)
     {
         TimeSpan duration = end.Subtract(start);
-        string formattedDuration = duration.ToString("HH:mm:ss");
-        return formattedDuration;
+        string formattedDuration = string.Format("{0}h " + "{1}m " + "{2}s",
+                                          duration.Hours,
+                                          duration.Minutes,
+                                          duration.Seconds);
+        string test = formattedDuration;
+        return test;
     }
 
     public static void CodingSessionActive()
@@ -32,5 +38,7 @@
 
         DateTime end = EndCodingSession();
         string time = CodingSessionDuration(start, end);
+
+        DatabaseManager.InsertSession(time);
     }
 }

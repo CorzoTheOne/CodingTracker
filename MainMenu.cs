@@ -28,6 +28,19 @@ namespace CodingTracker
                     CodingSession.CodingSessionActive();
                     break;
                 case "2":
+                    DatabaseManager.ViewSessions();
+                    break;
+                case "3":
+                    Console.WriteLine("Enter the ID of the session you want to delete: ");
+                    string sesId = Console.ReadLine();
+                    DatabaseManager.DeleteSession(sesId);
+                    break;
+                case "4":
+                    Console.WriteLine("Enter the ID of the session you want to delete: ");
+                    string updateSesId = Console.ReadLine();
+                    Console.WriteLine("Enter the new duration you want to add: Format: (Hh Mm Ss)");
+                    string updateSesDuration = Console.ReadLine();
+                    DatabaseManager.UpdateSession(updateSesId, updateSesDuration);
                     break;
             }
         }
