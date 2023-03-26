@@ -95,4 +95,38 @@ internal class DatabaseManager
         }
     }
 
+    public static void Get()
+    {
+        using (_connection)
+        {
+            _connection.Open();
+            var tableCmd = _connection.CreateCommand();
+
+            tableCmd.CommandText = "SELECT * FROM coding";
+
+            SqliteDataReader reader = tableCmd.ExecuteReader();
+
+            List<Coding> tableData = new List<Coding>();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tableData.Add(
+                        new Coding
+                        {
+                            Id = reader.GetInt32(0),
+                            Date = reader.GetString(1),
+                            Duration = reader.GetString(2),
+                        });
+                }
+            }
+
+            ConsoleTableBuilder
+                .From(tableData)
+                .ExportAndWriteLine();
+            Console.WriteLine("\n\n");
+        }
+    }
+
 }

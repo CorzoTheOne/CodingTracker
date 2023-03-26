@@ -29,6 +29,7 @@ namespace CodingTracker
                     break;
                 case "2":
                     DatabaseManager.ViewSessions();
+                    DatabaseManager.Get();
                     break;
                 case "3":
                     Console.WriteLine("Enter the ID of the session you want to delete: ");
